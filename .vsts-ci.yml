@@ -1,0 +1,35 @@
+# Xcode
+# Build, test, and archive an Xcode workspace on macOS.
+# https://aka.ms/yaml
+
+queue: 'Hosted macOS Preview'
+
+variables:
+  buildConfiguration: 'Release'
+  buildSdk: 'iphoneos'
+  scheme: ''
+  xcodeVersion: 'default'
+  # system.debug: 'true'
+
+steps:
+- task: Xcode@4
+  displayName: 'Xcode build'
+  inputs:
+    configuration: '$(buildConfiguration)'
+    scheme: '$(scheme)'
+    sdk: '$(buildSdk)'
+    xcodeVersion: '$(xcodeVersion)'
+    signingOption: 'nosign'
+
+- task: CopyFiles@2
+  displayName: 'Copy artifacts'
+  inputs:
+    contents: '**/*.ipa'
+    targetFolder: '$(build.artifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifacts'
+  inputs:
+    pathtoPublish: '$(build.artifactStagingDirectory)'
+    artifactName: 'artifact'
+    artifactType: 'container'
